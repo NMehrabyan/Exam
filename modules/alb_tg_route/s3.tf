@@ -20,35 +20,29 @@ data "aws_s3_bucket" "my_bucket_details" {
   bucket = aws_s3_bucket.my_bucket.id
 }
 
-resource "aws_iam_role" "role" {
-  name               = "role"
-  assume_role_policy = jsonencode({
+
+
+resource "aws_s3_bucket_policy" "bucket_policy" {
+  bucket = "nar.babkenasoyan.com"
+
+  policy = jsonencode({
     Version   = "2012-10-17",
-    Statement = [{
-      Effect    = "Allow",
-      Principal = {
-        Service = "ec2.amazonaws.com"  # Assuming EC2 will assume this role
-      },
-      Action    = "sts:AssumeRole"
-    }]
+    Statement = [
+      {
+        Sid       = "VPCE",
+        Effect    = "Allow",
+        Principal = "*",
+        Action    = "s3:GetObject",
+        Resource  = [
+          "arn:aws:s3:::nar.babkenasoyan.com/*",
+          "arn:aws:s3:::nar.babkenasoyan.com"
+        ],
+        Condition = {
+          StringEquals = {
+            "aws:SourceVpce" = aws_vpc_endpoint.s3_endpoint.id
+          }
+        }
+      }
+    ]
   })
-}
-
-
-data "aws_iam_policy_document" "s3_policy" {
-  statement {
-    actions   = ["s3:PutBucketPolicy"]
-    resources = [aws_s3_bucket.my_bucket.arn]
-  }
-}
-
-resource "aws_iam_policy" "s3_policy" {
-  name        = "S3BucketPolicyAccess"
-  policy      = data.aws_iam_policy_document.s3_policy.json
-}
-
-resource "aws_iam_policy_attachment" "s3_policy_attachment" {
-  name       = "s3_policy_attachment"
-  roles      = [aws_iam_role.role.name]  # Replace with the name of your IAM role
-  policy_arn = aws_iam_policy.s3_policy.arn
 }
