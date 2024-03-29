@@ -1,11 +1,15 @@
+
 # Configure S3 bucket
 resource "aws_s3_bucket" "my_bucket" {
   bucket = "nar.babkenasoyan.com"
   force_destroy = true
+  
   website {
     index_document = "index.html"
   }
+   
 }
+
 
 # Upload an index.html file to the S3 bucket
 resource "aws_s3_object" "index_html" {
@@ -29,7 +33,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
     Version   = "2012-10-17",
     Statement = [
       {
-        Sid       = "VPCE",
+        Sid       = "PublicReadGetObject",
         Effect    = "Allow",
         Principal = "*",
         Action    = "s3:GetObject",
@@ -45,4 +49,15 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
       }
     ]
   })
+}
+
+
+resource "aws_s3_bucket_public_access_block" "access" {
+  bucket = aws_s3_bucket.my_bucket.id
+
+  block_public_acls       = false
+  block_public_policy     = false
+  ignore_public_acls      = false
+  restrict_public_buckets = false
+
 }
