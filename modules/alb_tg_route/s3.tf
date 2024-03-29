@@ -25,7 +25,7 @@ data "aws_s3_bucket" "my_bucket_details" {
 }
 
 resource "aws_s3_bucket_policy" "bucket_policy" {
-  bucket = "nar.babkenasoyan.com"
+  bucket = aws_s3_bucket.my_bucket.id
  policy = jsonencode({
     Version   = "2012-10-17",
     Statement = [
@@ -34,7 +34,7 @@ resource "aws_s3_bucket_policy" "bucket_policy" {
         Effect    = "Allow",
         Principal = "*",
         Action    =["s3:GetObject"],
-        Resource  =[ "arn:aws:s3:::nar.babkenasoyan.com/*"]
+        Resource  =[ "${aws_s3_bucket.my_bucket.arn}/*" ]
       }
     ]
   })
