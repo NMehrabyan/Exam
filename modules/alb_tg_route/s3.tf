@@ -24,33 +24,21 @@ data "aws_s3_bucket" "my_bucket_details" {
   bucket = aws_s3_bucket.my_bucket.id
 }
 
-
-
 resource "aws_s3_bucket_policy" "bucket_policy" {
   bucket = "nar.babkenasoyan.com"
-
-  policy = jsonencode({
+ policy = jsonencode({
     Version   = "2012-10-17",
     Statement = [
       {
         Sid       = "PublicReadGetObject",
         Effect    = "Allow",
         Principal = "*",
-        Action    = "s3:GetObject",
-        Resource  = [
-          "arn:aws:s3:::nar.babkenasoyan.com/*",
-          "arn:aws:s3:::nar.babkenasoyan.com"
-        ],
-        Condition = {
-          StringEquals = {
-            "aws:SourceVpce" = aws_vpc_endpoint.s3_endpoint.id
-          }
-        }
+        Action    =["s3:GetObject"],
+        Resource  =[ "arn:aws:s3:::nar.babkenasoyan.com/*"]
       }
     ]
   })
 }
-
 
 resource "aws_s3_bucket_public_access_block" "access" {
   bucket = aws_s3_bucket.my_bucket.id

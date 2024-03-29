@@ -32,4 +32,5 @@ resource "aws_route" "internet_gateway_route" {
 resource "aws_vpc_endpoint" "s3_endpoint" {
   vpc_id            = aws_vpc.my_vpc.id
   service_name      = "com.amazonaws.us-east-2.s3"
+  vpc_endpoint_type = "Interface"
 }
